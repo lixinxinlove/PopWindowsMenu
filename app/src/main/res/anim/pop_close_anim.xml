@@ -6,7 +6,7 @@
         android:fromYScale="1.0"
         android:toXScale="0"
         android:toYScale="0"
-        android:pivotX="100%"
+        android:pivotX="90%"
         android:pivotY="100%"
         android:fillAfter="true"
         android:repeatCount="0"
