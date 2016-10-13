@@ -10,13 +10,15 @@
         android:text="Hello World!" />
 
     <com.eventmosh.popwindowsmenu.popWindowsMenu
-
+        android:id="@+id/pop_windows_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:closeImage="@mipmap/close_icon"
         app:numColumns="4"
         app:openImage="@mipmap/open_icon"
-        app:textColor="@color/colorPrimary">
+        app:textColor="#ffffff"
+        app:menuItemBackground="@drawable/menu_item_selector"
+        >
 
     </com.eventmosh.popwindowsmenu.popWindowsMenu>
 

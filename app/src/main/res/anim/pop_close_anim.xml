@@ -11,6 +11,6 @@
         android:fillAfter="true"
         android:repeatCount="0"
         android:repeatMode="reverse"
-        android:duration="500"/>
+        android:duration="300"/>
 
 </set>

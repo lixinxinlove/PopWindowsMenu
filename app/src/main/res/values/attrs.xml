@@ -5,6 +5,9 @@
         <attr name="closeImage" format="integer" />
         <attr name="numColumns" format="integer" />
         <attr name="textColor" format="color" />
+        <attr name="menuItemBackground" format="integer" />
+        <attr name="menuAlpha" format="float" />
+
     </declare-styleable>
 
 </resources>
