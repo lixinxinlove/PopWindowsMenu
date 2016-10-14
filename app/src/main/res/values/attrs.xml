@@ -9,6 +9,10 @@
         <attr name="menuAlpha" format="integer" />
         <attr name="menuItemHeight" format="dimension" />
         <attr name="textSize" format="float" />
+        <attr name="menuButtonSize" format="dimension"/>
+        <attr name="menuPopMargin" format="dimension"/>
+        <attr name="menuButtonMarginRight" format="dimension"/>
+        <attr name="menuButtonMarginBottom" format="dimension"/>
 
     </declare-styleable>
 

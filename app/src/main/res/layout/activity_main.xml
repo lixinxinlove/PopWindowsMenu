@@ -5,32 +5,36 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView" />
+        android:text="Hello World!" />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="79dp" />
+        android:layout_marginBottom="79dp"
+        android:text="Hello World!" />
 
     <com.eventmosh.popwindowsmenu.PopWindowsMenu
         android:id="@+id/pop_windows_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
         app:closeImage="@mipmap/close_icon"
+        app:menuAlpha="199"
+        app:menuBackgroundColor="@color/colorViolet"
+        app:menuButtonSize="36dp"
+        app:menuPopMargin="18dp"
         app:numColumns="4"
         app:openImage="@mipmap/open_icon"
         app:textColor="#ffffff"
-        app:menuAlpha="199"
-        app:menuBackgroundColor="@color/colorViolet"
-
-       >
+        app:menuButtonMarginBottom="30dp"
+        app:menuButtonMarginRight="35dp"
+        >
 
     </com.eventmosh.popwindowsmenu.PopWindowsMenu>
 

@@ -26,8 +26,8 @@ public class MainActivity extends AppCompatActivity implements PopWindowsMenu.On
         }
 
         mPopWindowsMenu.setMenuData(list);
-        mPopWindowsMenu.setOnItemMenuListener(this);
-
+        mPopWindowsMenu.setOnItemMenuClickListener(this);
+        mPopWindowsMenu.setSelectPosition(3);
     }
 
     @Override
