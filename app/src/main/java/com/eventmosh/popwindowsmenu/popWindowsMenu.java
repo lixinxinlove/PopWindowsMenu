@@ -2,7 +2,8 @@ package com.eventmosh.popwindowsmenu;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.PaintDrawable;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,16 +26,20 @@ import java.util.List;
 /**
  * Created by android on 2016/10/13.
  */
-public class popWindowsMenu extends RelativeLayout implements View.OnClickListener, PopupWindow.OnDismissListener, AdapterView.OnItemClickListener {
+public class PopWindowsMenu extends RelativeLayout implements View.OnClickListener, PopupWindow.OnDismissListener, AdapterView.OnItemClickListener {
 
 
     private int numColumns;
     private int openIcon;
     private int closeIcon;
     private int textColor;
-    private int menuItemBg;
-    private float menuAlpha;
+    private int menuAlpha;
+    private int menuBackgroundColor;
+    private float menuItemHeight;
+    private float textSize;
 
+    private int selectPosition = 0;  //默认选中的item
+    private int menuSize = 0;
 
     private View contextView;
     private RelativeLayout rootView;
@@ -46,18 +51,22 @@ public class popWindowsMenu extends RelativeLayout implements View.OnClickListen
     private RotateAnimation rotateOpen;
     private RotateAnimation rotateClose;
 
+
+    private PopupWindow popWindow;
+    private GridView gridView;
+    private GridViewAdapter adapter = new GridViewAdapter();
     private int popupHeight;
 
 
-    public popWindowsMenu(Context context) {
+    public PopWindowsMenu(Context context) {
         this(context, null);
     }
 
-    public popWindowsMenu(Context context, AttributeSet attrs) {
+    public PopWindowsMenu(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public popWindowsMenu(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PopWindowsMenu(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         Log.e("popWindowsMenu", "popWindowsMenu");
         this.context = context;
@@ -72,13 +81,16 @@ public class popWindowsMenu extends RelativeLayout implements View.OnClickListen
 
     private void init(AttributeSet attrs) {
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.popWindowsMenu);
-        numColumns = a.getInt(R.styleable.popWindowsMenu_numColumns, 3);
-        openIcon = a.getResourceId(R.styleable.popWindowsMenu_openImage, R.mipmap.open_icon);
-        closeIcon = a.getResourceId(R.styleable.popWindowsMenu_closeImage, R.mipmap.close_icon);
-        textColor = a.getColor(R.styleable.popWindowsMenu_textColor, getResources().getColor(R.color.colorAccent));
-        menuItemBg = a.getResourceId(R.styleable.popWindowsMenu_menuItemBackground, 0);
-        menuAlpha = a.getFloat(R.styleable.popWindowsMenu_menuAlpha, 0.5f);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PopWindowsMenu);
+        numColumns = a.getInt(R.styleable.PopWindowsMenu_numColumns, 3);
+        openIcon = a.getResourceId(R.styleable.PopWindowsMenu_openImage, R.mipmap.open_icon);
+        closeIcon = a.getResourceId(R.styleable.PopWindowsMenu_closeImage, R.mipmap.close_icon);
+        textColor = a.getColor(R.styleable.PopWindowsMenu_textColor, getResources().getColor(R.color.colorAccent));
+        menuAlpha = a.getInt(R.styleable.PopWindowsMenu_menuAlpha, 200);
+        menuBackgroundColor = a.getColor(R.styleable.PopWindowsMenu_menuBackgroundColor, 0);
+        menuItemHeight = a.getDimension(R.styleable.PopWindowsMenu_menuItemHeight, 38);
+        textSize = a.getFloat(R.styleable.PopWindowsMenu_textSize, 14);
+
         a.recycle();
 
 
@@ -87,13 +99,45 @@ public class popWindowsMenu extends RelativeLayout implements View.OnClickListen
         menu.setImageResource(openIcon);
         menu.setOnClickListener(this);
 
+    }
+
+
+    private void initPop() {
+
+
+        dialogView = View.inflate(context, R.layout.pop_layout, null);
+        View triangle = dialogView.findViewById(R.id.triangle);
+        triangle.getBackground().setAlpha(menuAlpha);
+
+
+        gridView = (GridView) dialogView.findViewById(R.id.grid_view);
+        gridView.setNumColumns(numColumns);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(this);
+
+        popWindow = new PopupWindow(dialogView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        popWindow.setAnimationStyle(R.style.AnimationFade);
+
+        popWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popWindow.setFocusable(true);
+        popWindow.setOnDismissListener(this);
+
+        // dialogView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+        // int popupWidth = dialogView.getMeasuredWidth();
+        //  popupHeight = dialogView.getMeasuredHeight();
 
     }
 
 
-    private PopupWindow popWindow;
-    private GridView gridView;
+    private void showMenu() {
+        menu.setImageResource(closeIcon);
+        menu.startAnimation(rotateOpen);
 
+        int[] location = new int[2];
+        menu.getLocationOnScreen(location);
+
+        popWindow.showAtLocation(contextView, Gravity.CENTER | Gravity.TOP, 0, location[1] - popupHeight - ScreenUtil.dip2px(context, 12));
+    }
 
     @Override
     public void onClick(View v) {
@@ -107,54 +151,26 @@ public class popWindowsMenu extends RelativeLayout implements View.OnClickListen
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        popWindow.dismiss();
-        if (listener != null) {
-            listener.onItemMenuClick(position);
+
+        if (position < menuSize) {
+            if (listener != null) {
+                selectPosition = position;
+                adapter.notifyDataSetChanged();
+                listener.onItemMenuClick(position);
+            }
         }
+        gridView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                popWindow.dismiss();
+            }
+        }, 10);
     }
 
     @Override
     public void onDismiss() {
         menu.setImageResource(openIcon);
         menu.startAnimation(rotateClose);
-    }
-
-    private void showMenu() {
-        menu.setImageResource(closeIcon);
-        menu.startAnimation(rotateOpen);
-
-        int[] location = new int[2];
-        menu.getLocationOnScreen(location);
-
-        popWindow.showAtLocation(contextView, Gravity.NO_GRAVITY, location[0], location[1] - popupHeight - 5);
-    }
-
-
-    private void initPop() {
-
-        dialogView = View.inflate(context, R.layout.pop_layout, null);
-        gridView = (GridView) dialogView.findViewById(R.id.grid_view);
-        gridView.setNumColumns(numColumns);
-
-        gridView.setAlpha(menuAlpha);
-
-
-        gridView.setAdapter(new GridViewAdapter());
-        gridView.setOnItemClickListener(this);
-
-        popWindow = new PopupWindow(dialogView, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-        popWindow.setAnimationStyle(R.style.AnimationFade);
-        popWindow.setBackgroundDrawable(new PaintDrawable());
-        popWindow.setFocusable(true);
-        popWindow.setOnDismissListener(this);
-
-        //  dialogView.measure(0, 0);
-        dialogView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-        // int popupWidth = dialogView.getMeasuredWidth();
-        popupHeight = dialogView.getMeasuredHeight();
-
-
-
     }
 
 
@@ -173,9 +189,25 @@ public class popWindowsMenu extends RelativeLayout implements View.OnClickListen
     }
 
 
-    public void setMenuItems(List mData) {
+    public void setMenuData(List mData) {
         this.mData = mData;
+        menuSize = mData.size();
+        int i = mData.size() / numColumns;
+        if (mData.size() % numColumns != 0) {
+            i++;
+        }
+
+        popupHeight = ScreenUtil.dip2px(context, menuItemHeight * i);
+
+        while (mData.size() % numColumns != 0) {
+            mData.add("");
+        }
         initPop();
+    }
+
+
+    public void setSelectPosition(int position) {
+        this.selectPosition = position;
     }
 
 
@@ -200,18 +232,24 @@ public class popWindowsMenu extends RelativeLayout implements View.OnClickListen
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
 
-            View v = View.inflate(context, R.layout.item_menu, null);
-            TextView menuItem = (TextView) v.findViewById(R.id.menu_item);
-            menuItem.setTextColor(textColor);
-            // menuItem.setBackground(context.getResources().getDrawable(menuItemBg));
-            menuItem.setBackgroundDrawable(context.getResources().getDrawable(menuItemBg));
+            TextView textView = new TextView(context);
+            textView.setHeight(ScreenUtil.dip2px(context, menuItemHeight));
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(textSize);
 
-            menuItem.setText(mData.get(i).toString());
+            textView.setTextColor(textColor);
+            textView.setText(mData.get(i).toString());
 
-            return v;
+            textView.setBackgroundColor(menuBackgroundColor);
+
+            textView.getBackground().setAlpha(menuAlpha);
+
+            if (selectPosition == i) {
+                textView.setBackgroundColor(menuBackgroundColor);
+            }
+            return textView;
         }
     }
-
 
     private OnItemMenuListener listener;
 

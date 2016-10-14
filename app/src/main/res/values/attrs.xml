@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="popWindowsMenu">
+    <declare-styleable name="PopWindowsMenu">
         <attr name="openImage" format="integer" />
         <attr name="closeImage" format="integer" />
         <attr name="numColumns" format="integer" />
         <attr name="textColor" format="color" />
-        <attr name="menuItemBackground" format="integer" />
-        <attr name="menuAlpha" format="float" />
+        <attr name="menuBackgroundColor" format="color" />
+        <attr name="menuAlpha" format="integer" />
+        <attr name="menuItemHeight" format="dimension" />
+        <attr name="textSize" format="float" />
 
     </declare-styleable>
 

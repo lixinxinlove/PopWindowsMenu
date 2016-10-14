@@ -7,10 +7,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements popWindowsMenu.OnItemMenuListener {
+public class MainActivity extends AppCompatActivity implements PopWindowsMenu.OnItemMenuListener {
 
 
-    private popWindowsMenu mPopWindowsMenu;
+    private PopWindowsMenu mPopWindowsMenu;
 
 
     private List list = new ArrayList();
@@ -19,13 +19,13 @@ public class MainActivity extends AppCompatActivity implements popWindowsMenu.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mPopWindowsMenu = (popWindowsMenu) findViewById(R.id.pop_windows_menu);
+        mPopWindowsMenu = (PopWindowsMenu) findViewById(R.id.pop_windows_menu);
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 8; i++) {
             list.add("lee" + i);
         }
 
-        mPopWindowsMenu.setMenuItems(list);
+        mPopWindowsMenu.setMenuData(list);
         mPopWindowsMenu.setOnItemMenuListener(this);
 
     }
